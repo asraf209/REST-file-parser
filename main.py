@@ -1,6 +1,6 @@
 #!venv/bin/python
 
-from flask import Flask, request
+from flask import Flask, request, redirect, url_for
 from werkzeug import secure_filename
 
 import os
@@ -9,6 +9,7 @@ import config
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = config.MAX_FILE_SIZE
 
 @app.route('/')
 def index():
