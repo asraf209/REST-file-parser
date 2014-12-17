@@ -21,20 +21,6 @@ def index():
     return "I am running!"
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
-
-
-'''def allowed_file(filename):
-    if '.' in filename:
-           return filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
-
-    # Providing support for files with no extension
-    # I am assuming they will mostly be unix text files
-    return True
-'''
-
 # Upload a file and then parse it
 @app.route('/upload/', methods=['POST'])
 def upload_file():
@@ -43,7 +29,8 @@ def upload_file():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(join(app.config['UPLOAD_FOLDER'], filename))
-        return parser.parse(filename)
+        map = parser.parse(filename)
+        return json_dumps(map)
 
     else:
         return 'Not supported file type. \n' \
@@ -56,8 +43,11 @@ def upload_file():
 @app.route('/files/', methods=['GET'])
 def get_all_files():
     files = [ f for f in listdir(config.UPLOAD_FOLDER) if isfile(join(config.UPLOAD_FOLDER, f)) ]
-    return 'All uploaded files: \n' + '\n'.join(files)
-
+    filelist = []
+    for filename in files:
+        out = get_info(filename)
+        filelist.append(out)
+    return json_dumps(filelist)
 
 
 
@@ -66,15 +56,8 @@ def get_all_files():
 def get_file(filename):
     if isfile(config.UPLOAD_FOLDER + '/' + filename):
         try:
-            st = stat(config.UPLOAD_FOLDER + '/' + filename)
-
-            out = {}
-            out['File Name'] = filename
-            out['Size'] = st.st_size
-            out['Last Access Time'] = asctime(localtime(st.st_atime))
-            out['Last Modify Time'] = asctime(localtime(st.st_mtime))
-
-            return json.dumps(out, indent = 4, separators=(',', ': '),sort_keys=True)
+            out = get_info(filename)
+            return json_dumps(out)
 
         except:
             return 'Failed to get information about the file: ' + filename
@@ -82,6 +65,27 @@ def get_file(filename):
         return 'File not found: ' + filename + '\n'
 
 
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
+
+
+
+def get_info(filename):
+    st = stat(config.UPLOAD_FOLDER + '/' + filename)
+    out = {}
+    out['File Name'] = filename
+    out['Size'] = st.st_size
+    out['Last Access Time'] = asctime(localtime(st.st_atime))
+    out['Last Modify Time'] = asctime(localtime(st.st_mtime))
+    return out
+
+
+
+def json_dumps(map):
+    return json.dumps(map, indent = 4, separators=(',', ': '),sort_keys=True)
 
 
 

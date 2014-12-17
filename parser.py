@@ -21,7 +21,7 @@ def parse(filename):
             out['Word Occurrences'] = mapWord
 
             f.close()
-            return json.dumps(out, indent = 4, separators=(',', ': '),sort_keys=True)
+            return out
 
     except IOError:
         return 'No such file: ' + filename
