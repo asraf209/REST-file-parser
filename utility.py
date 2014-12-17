@@ -30,3 +30,22 @@ def get_info(filename):
 
 
 
+def remove_from_map(map, word):
+    if word is None or word.strip() == '':
+        return map
+    else:
+        word = word.strip()
+        for key in map['Words'].keys():
+            if word in key:
+                del map['Words'][key]
+
+
+
+def include_only(map, word):
+    if word is None or word.strip() == '':
+        return map
+    else:
+        word = word.strip()
+        for key in map['Words'].keys():
+            if word not in key:
+                del map['Words'][key]

@@ -8,7 +8,7 @@ from os.path import join, isfile
 
 import config
 import parser
-from utility import allowed_file, get_info, json_dumps
+from utility import allowed_file, get_info, json_dumps, remove_from_map, include_only
 
 
 app = Flask(__name__)
@@ -67,10 +67,20 @@ def get_file(filename):
 
 
 # Parse and get word count for any specific file that has already been uploaded
+# Can take parameters; like;
+# a matching word that must be there, or
+# a matching word that should not be there
 @app.route('/parse/<filename>', methods=['GET'])
 def parse_file(filename):
     if isfile(config.UPLOAD_FOLDER + '/' + filename):
         map = parser.parse(filename)
+
+        wordToRemove = request.args.get('discard', None)
+        remove_from_map(map, wordToRemove)
+
+        wordToInclude = request.args.get('only', None)
+        include_only(map, wordToInclude)
+
         return json_dumps(map)
     else:
         return 'File not found: ' + filename + '\n'

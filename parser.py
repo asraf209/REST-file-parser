@@ -20,7 +20,7 @@ def parse(filename):
             out['File Name'] = filename
             out['Number of Lines'] = num_lines
             out['Number of Words'] = num_words
-            out['Word Frequency'] = mapWord
+            out['Words'] = mapWord
 
             file.close()
             return out
