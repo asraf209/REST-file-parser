@@ -1,6 +1,8 @@
 import config
+import json
 
-map = {}
+out = {}
+mapWord = {}
 
 def parse(filename):
     num_lines = 0
@@ -12,13 +14,17 @@ def parse(filename):
             words = line.split()
             num_words += len(words)
             populate_map(words)
-        return str(map)
-        #return str(num_lines) + ', ' + str(num_words)
+
+        out['Number of Lines'] = num_lines
+        out['Number of Words'] = num_words
+        out['Word Occurrences'] = mapWord
+
+        return json.dumps(out, indent = 4, separators=(',', ': '),sort_keys=True)
 
 
 def populate_map(words):
     for word in words:
-        if map.get(word) is None:
-            map[word] = 1
+        if mapWord.get(word) is None:
+            mapWord[word] = 1
         else:
-            map[word] = map.get(word) + 1
+            mapWord[word] = mapWord.get(word) + 1

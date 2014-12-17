@@ -17,20 +17,32 @@ def index():
     return "I am running!"
 
 
-def allowed_file(filename):
+'''def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1] not in config.NOT_ALLOWED_EXTENSIONS
+'''
+
+def allowed_file(filename):
+    if '.' in filename:
+           return filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
+
+    # Providing support for files with no extension
+    # I am assuming they will mostly be text files
+    return True
 
 
 @app.route('/upload/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         file = request.files['file']
+        #return test(file)
+
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return parser.parse(filename)
-
+        else:
+            return 'Not supported file type. \n'
     return ''
 
 
