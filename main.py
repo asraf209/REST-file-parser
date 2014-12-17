@@ -66,5 +66,16 @@ def get_file(filename):
 
 
 
+# Parse and get word count for any specific file that has already been uploaded
+@app.route('/parse/<filename>', methods=['GET'])
+def parse_file(filename):
+    if isfile(config.UPLOAD_FOLDER + '/' + filename):
+        map = parser.parse(filename)
+        return json_dumps(map)
+    else:
+        return 'File not found: ' + filename + '\n'
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
