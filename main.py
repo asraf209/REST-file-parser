@@ -3,18 +3,18 @@
 from flask import Flask, request, redirect, url_for
 from werkzeug import secure_filename
 
-from os import listdir, stat
+from os import listdir
 from os.path import join, isfile
-from time import asctime, localtime
 
-import json
 import config
 import parser
+from utility import allowed_file, get_info, json_dumps
 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = config.MAX_FILE_SIZE
+
 
 @app.route('/')
 def index():
@@ -63,29 +63,6 @@ def get_file(filename):
             return 'Failed to get information about the file: ' + filename
     else:
         return 'File not found: ' + filename + '\n'
-
-
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
-
-
-
-def get_info(filename):
-    st = stat(config.UPLOAD_FOLDER + '/' + filename)
-    out = {}
-    out['File Name'] = filename
-    out['Size'] = st.st_size
-    out['Last Access Time'] = asctime(localtime(st.st_atime))
-    out['Last Modify Time'] = asctime(localtime(st.st_mtime))
-    return out
-
-
-
-def json_dumps(map):
-    return json.dumps(map, indent = 4, separators=(',', ': '),sort_keys=True)
 
 
 
