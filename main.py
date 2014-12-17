@@ -2,8 +2,9 @@
 
 from flask import Flask, request, redirect, url_for
 from werkzeug import secure_filename
+from os import listdir
+from os.path import join, isfile
 
-import os
 import config
 import parser
 
@@ -31,22 +32,29 @@ def allowed_file(filename):
     return True
 '''
 
-
-@app.route('/upload/', methods=['GET', 'POST'])
+# Upload a file and then parse it
+@app.route('/upload/', methods=['POST'])
 def upload_file():
-    if request.method == 'POST':
-        file = request.files['file']
+    file = request.files['file']
 
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return parser.parse(filename)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(join(app.config['UPLOAD_FOLDER'], filename))
+        return parser.parse(filename)
 
-        else:
-            return 'Not supported file type. \n' \
-                   'These are the valid file extensions: \n' + \
-                    str(config.ALLOWED_EXTENSIONS)
-    return ''
+    else:
+        return 'Not supported file type. \n' \
+               'These are the valid file extensions: \n' + \
+                str(config.ALLOWED_EXTENSIONS)
+
+
+
+# Returns list of all files that are uploaded
+@app.route('/files/', methods=['GET'])
+def get_all_files():
+    files = [ f for f in listdir(config.UPLOAD_FOLDER) if isfile(join(config.UPLOAD_FOLDER, f)) ]
+    return '\n'.join(files)
+
 
 
 if __name__ == '__main__':
