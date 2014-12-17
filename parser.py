@@ -20,10 +20,13 @@ def parse(filename):
             out['Number of Words'] = num_words
             out['Word Occurrences'] = mapWord
 
+            f.close()
             return json.dumps(out, indent = 4, separators=(',', ': '),sort_keys=True)
 
     except IOError:
         return 'No such file: ' + filename
+    except:
+        return 'Unexpected error while parsing file: ' + filename
 
 
 def populate_map(words):
