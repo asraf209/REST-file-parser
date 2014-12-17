@@ -7,9 +7,9 @@ from os import listdir, stat
 from os.path import join, isfile
 from time import asctime, localtime
 
+import json
 import config
 import parser
-import json
 
 
 app = Flask(__name__)
