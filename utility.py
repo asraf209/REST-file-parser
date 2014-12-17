@@ -1,3 +1,5 @@
+#!venv/bin/python
+
 import config
 import json
 from time import asctime, localtime

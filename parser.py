@@ -1,5 +1,6 @@
+#!venv/bin/python
+
 import config
-import json
 
 out = {}
 mapWord = {}
@@ -9,18 +10,19 @@ def parse(filename):
     num_words = 0
 
     try:
-        with open(config.UPLOAD_FOLDER + '/' + filename, 'r') as f:
-            for line in f:
+        with open(config.UPLOAD_FOLDER + '/' + filename, 'r') as file:
+            for line in file:
                 num_lines += 1
                 words = line.split()
                 num_words += len(words)
-                populate_map(words)
+                add_to_map(words)
 
+            out['File Name'] = filename
             out['Number of Lines'] = num_lines
             out['Number of Words'] = num_words
-            out['Word Occurrences'] = mapWord
+            out['Word Frequency'] = mapWord
 
-            f.close()
+            file.close()
             return out
 
     except IOError:
@@ -29,7 +31,7 @@ def parse(filename):
         return 'Unexpected error while parsing file: ' + filename
 
 
-def populate_map(words):
+def add_to_map(words):
     for word in words:
         if mapWord.get(word) is None:
             mapWord[word] = 1
