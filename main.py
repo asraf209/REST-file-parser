@@ -36,9 +36,9 @@ def upload_file():
         return json_dumps(map)                                      # Return the responses as JSON format
 
     else:
-        return 'Not supported file type. \n' \
-               'These are the valid file extensions: \n' + \
-                str(config.ALLOWED_EXTENSIONS)
+        return 'Not a supported file type. \n' \
+               'These are the allowable file extensions: \n' + \
+                '{' + ', '.join(config.ALLOWED_EXTENSIONS) +'}\n'
 
 
 # Returns list of all files that are uploaded,
