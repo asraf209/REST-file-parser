@@ -1,21 +1,25 @@
 #!venv/bin/python
+# Parser to parse a text file and
+# then count lines, words and word frequencies
 
 import config
 
-out = {}
-mapWord = {}
+out = {}            # Final JSON response
+mapWord = {}        # HashMap of <word, frequency>
 
+
+# Read a file and count individual word
 def parse(filename):
-    num_lines = 0
-    num_words = 0
+    num_lines = 0           # Number of lines
+    num_words = 0           # Number of words
 
     try:
         with open(config.UPLOAD_FOLDER + '/' + filename, 'r') as file:
-            for line in file:
+            for line in file:                   # For each line
                 num_lines += 1
-                words = line.split()
+                words = line.split()            # split a line into words
                 num_words += len(words)
-                add_to_map(words)
+                add_to_map(words)               # put all words into HashMap.
 
             out['File Name'] = filename
             out['Number of Lines'] = num_lines
@@ -31,6 +35,9 @@ def parse(filename):
         return 'Unexpected error while parsing file: ' + filename
 
 
+
+# Put all words into HashMap.
+# Also update frequency as necessary
 def add_to_map(words):
     for word in words:
         if mapWord.get(word) is None:
