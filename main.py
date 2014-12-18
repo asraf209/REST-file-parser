@@ -2,7 +2,7 @@
 # Main entry point of the application.
 # Provides various end points
 
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, Response
 from werkzeug import secure_filename
 
 from os import listdir
@@ -11,7 +11,7 @@ from os.path import join, isfile
 import config
 import parser
 from utility import allowed_file, get_info, json_dumps, remove_from_map, keep_only
-
+import httplib
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
@@ -36,14 +36,15 @@ def upload_file():
         return json_dumps(map)                                      # Return the responses as JSON format
 
     else:
-        return 'Not a supported file type. \n' \
+        out = 'Not a supported file type. \n' \
                'These are the allowable file extensions: \n' + \
                 '{' + ', '.join(config.ALLOWED_EXTENSIONS) +'}\n'
+        return out
 
 
 # Returns list of all files that are uploaded,
 # with their metadata
-@app.route('/files/', methods=['GET'])
+@app.route('/files', methods=['GET'])
 def get_all_files():
     files = [ f for f in listdir(config.UPLOAD_FOLDER) if isfile(join(config.UPLOAD_FOLDER, f)) ]
     filelist = []
