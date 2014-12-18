@@ -1,4 +1,6 @@
 #!venv/bin/python
+# Main entry point of the application.
+# Provides various end points
 
 from flask import Flask, request, redirect, url_for
 from werkzeug import secure_filename
@@ -8,7 +10,7 @@ from os.path import join, isfile
 
 import config
 import parser
-from utility import allowed_file, get_info, json_dumps, remove_from_map, include_only
+from utility import allowed_file, get_info, json_dumps, remove_from_map, keep_only
 
 
 app = Flask(__name__)
@@ -16,21 +18,22 @@ app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = config.MAX_FILE_SIZE
 
 
+# Home page
 @app.route('/')
 def index():
     return "I am running!"
 
 
-# Upload a file and then parse it
+# Upload a file and parse
 @app.route('/upload/', methods=['POST'])
 def upload_file():
     file = request.files['file']
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
-        file.save(join(app.config['UPLOAD_FOLDER'], filename))
-        map = parser.parse(filename)
-        return json_dumps(map)
+        file.save(join(app.config['UPLOAD_FOLDER'], filename))      # Save the file in upload directory
+        map = parser.parse(filename)                                # Parse and get word frequencies in a HashMap
+        return json_dumps(map)                                      # Return the responses as JSON format
 
     else:
         return 'Not supported file type. \n' \
@@ -38,17 +41,16 @@ def upload_file():
                 str(config.ALLOWED_EXTENSIONS)
 
 
-
-# Returns list of all files that are uploaded
+# Returns list of all files that are uploaded,
+# with their metadata
 @app.route('/files/', methods=['GET'])
 def get_all_files():
     files = [ f for f in listdir(config.UPLOAD_FOLDER) if isfile(join(config.UPLOAD_FOLDER, f)) ]
     filelist = []
     for filename in files:
-        out = get_info(filename)
-        filelist.append(out)
-    return json_dumps(filelist)
-
+        out = get_info(filename)                # Get metadata of a file
+        filelist.append(out)                    # And append those info into a list
+    return json_dumps(filelist)                 # Returns response as JSON
 
 
 # Returns detail info of an uploaded file
@@ -65,21 +67,20 @@ def get_file(filename):
         return 'File not found: ' + filename + '\n'
 
 
-
-# Parse and get word count for any specific file that has already been uploaded
+# Parse and get word count for any specific file that has already been uploaded.
 # Can take parameters; like;
-# a matching word that must be there, or
-# a matching word that should not be there
+# a matching string that must be in a word, and/or
+# a matching string that should not be in a word
 @app.route('/parse/<filename>', methods=['GET'])
 def parse_file(filename):
     if isfile(config.UPLOAD_FOLDER + '/' + filename):
         map = parser.parse(filename)
 
         wordToRemove = request.args.get('discard', None)
-        remove_from_map(map, wordToRemove)
+        remove_from_map(map, wordToRemove)                          # Remove all words from HashMap who has a substring same as wordToRemove
 
         wordToInclude = request.args.get('only', None)
-        include_only(map, wordToInclude)
+        keep_only(map, wordToInclude)                               # Only keep those words who has a substring same as wordToInclude
 
         return json_dumps(map)
     else:
