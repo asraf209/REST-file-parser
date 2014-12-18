@@ -2,7 +2,7 @@
 # Main entry point of the application.
 # Provides various end points
 
-from flask import Flask, request, redirect, url_for, Response
+from flask import Flask, request, redirect, url_for, Response, jsonify
 from werkzeug import secure_filename
 
 from os import listdir
@@ -11,7 +11,7 @@ from os.path import join, isfile
 import config
 import parser
 from utility import allowed_file, get_info, json_dumps, remove_from_map, keep_only
-import httplib
+
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
@@ -25,7 +25,7 @@ def index():
 
 
 # Upload a file and parse
-@app.route('/upload/', methods=['POST'])
+@app.route('/upload', methods=['POST'])
 def upload_file():
     file = request.files['file']
 
