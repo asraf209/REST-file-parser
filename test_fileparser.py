@@ -68,7 +68,7 @@ class FileParserTestCase(unittest.TestCase):
 
     # Read a file metadata
     def test_file_metadata(self):
-        response = self.app.get('/files/rest.txt')
+        response = self.app.get('/files/rest.txt')          # 'rest.txt' is already uploaded onto the 'uploads' folder
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
         self.assertTrue(data['File Name'] == 'rest.txt')
