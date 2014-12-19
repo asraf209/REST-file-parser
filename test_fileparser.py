@@ -28,6 +28,7 @@ class FileParserTestCase(unittest.TestCase):
 
     # Test uploading a file
     def test_upload(self):
+        # POSTing a file named 'test.txt' with contents 'Hello world, hello all!'
         response = self.app.post('/upload',
                     data={'file':(StringIO('Hello world, hello all!'), 'test.txt')})
         self.assertTrue(response.status_code == 200, msg='POST request works fine')
@@ -36,6 +37,8 @@ class FileParserTestCase(unittest.TestCase):
         self.assertEqual(data['File Name'], 'test.txt')
         self.assertEqual(data['Number of Lines'], 1)
         self.assertEqual(data['Number of Words'], 4)
+
+        self.assertEqual(len(data['Words']), 3, msg="3 words has been returned in response")
         self.assertEqual(data['Words']['hello'], 2)
         self.assertEqual(data['Words']['world'], 1)
         self.assertEqual(data['Words']['all'], 1)
@@ -43,6 +46,7 @@ class FileParserTestCase(unittest.TestCase):
 
     # Try to upload an unsupported file type
     def test_not_supported_file_type(self):
+        # POSTing a file named 'test.foo' which is not supported
         response = self.app.post('/upload',
                     data={'file':(StringIO('We are sample contents'), 'test.foo')})
         self.assertTrue(response.status_code == 200, msg='POST request works fine')
@@ -59,6 +63,7 @@ class FileParserTestCase(unittest.TestCase):
         self.assertEqual(data['File Name'], 'test-blank.txt')
         self.assertEqual(data['Number of Lines'], 0)
         self.assertEqual(data['Number of Words'], 0)
+        self.assertEqual(len(data['Words']), 0, msg="No words has been returned in response")
 
 
     # Check list of files that are already been uploaded
@@ -66,7 +71,7 @@ class FileParserTestCase(unittest.TestCase):
         response = self.app.get('/files')
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
-        self.assertTrue(len(data) > 0, msg='Possibly there are few uploaded files')
+        self.assertTrue(len(data) > 0, msg='There are few uploaded files in uploads/ folder')
 
 
     # Read a file metadata
@@ -78,7 +83,7 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(data['Size'] == 413, msg='File size: 413 B')
 
 
-    # Parse a file and count lines, words
+    # Parse a file that is already uploaded and count lines, words
     def test_parse_and_count(self):
         response = self.app.get('/parse/jingle.txt')          # 'jingle.txt' is already uploaded onto the 'uploads' folder
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
@@ -86,8 +91,9 @@ class FileParserTestCase(unittest.TestCase):
 
         self.assertTrue(data['File Name'] == 'jingle.txt')
         self.assertTrue(data['Number of Lines'] == 18)
-        self.assertTrue(data['Number of Words'] == 78)
+        self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
 
+        self.assertEqual(len(data['Words']), 37, msg="37 words have been returned in response")
         self.assertTrue(data['Words']['jingle'] == 6)           # 'jingle' appears 6 times
         self.assertTrue(data['Words']['bells'] == 5)            # 'bells' appears 5 times
         self.assertTrue(data['Words']['ride'] == 3)             # 'ride' appears 3 times
@@ -100,7 +106,9 @@ class FileParserTestCase(unittest.TestCase):
 
     # Discard all words that have a matching substring
     def test_discard_with_matching_string(self):
-        response = self.app.get('/parse/jingle.txt?discard=ing')          # Discarding all words that have 'ing' within them
+        discard = 'ing'
+        # Discard those words that have 'ing' within them
+        response = self.app.get('/parse/jingle.txt?' + 'discard=' + discard)
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
@@ -108,19 +116,22 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(data['Number of Lines'] == 18)
         self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
 
-        self.assertFalse(data['Words'].get('jingle'), msg="Discarded this one")
+        self.assertEqual(len(data['Words']), 30, msg="30 words have been returned in response")
+        self.assertFalse(data['Words'].get('jingle'), msg="This item is not in the response")
         self.assertTrue(data['Words']['bells'] == 5)
         self.assertTrue(data['Words']['ride'] == 3)
         self.assertTrue(data['Words']['the'] == 5)
         self.assertTrue(data['Words']['snow'] == 1)
-        self.assertFalse(data['Words'].get('laughing'), msg="Discarded this one")
-        self.assertFalse(data['Words'].get('dashing'), msg="Discarded this one")
-        self.assertFalse(data['Words'].get('sing'), msg="Discarded this one")
+        self.assertFalse(data['Words'].get('laughing'), msg="This item is not in the response")
+        self.assertFalse(data['Words'].get('dashing'), msg="This item is not in the response")
+        self.assertFalse(data['Words'].get('sing'), msg="This item is not in the response")
 
 
     # Consider only those words that have a matching substring
     def test_keep_only_with_matching_string(self):
-        response = self.app.get('/parse/jingle.txt?only=ing')          # Only keep those words that have 'ing' within them
+        keep = 'ing'
+        # Keep only those words that have 'ing' within them
+        response = self.app.get('/parse/jingle.txt?' + 'only=' + keep)
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
@@ -128,11 +139,12 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(data['Number of Lines'] == 18)
         self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
 
+        self.assertEqual(len(data['Words']), 7, msg="7 words have been returned in response")
         self.assertTrue(data['Words']['jingle'] == 6)
-        self.assertFalse(data['Words'].get('bells'), msg="Discarded this one")
-        self.assertFalse(data['Words'].get('ride'), msg="Discarded this one")
-        self.assertFalse(data['Words'].get('the'), msg="Discarded this one")
-        self.assertFalse(data['Words'].get('snow'), msg="Discarded this one")
+        self.assertFalse(data['Words'].get('bells'), msg="This item is not in the response")
+        self.assertFalse(data['Words'].get('ride'), msg="This item is not in the response")
+        self.assertFalse(data['Words'].get('the'), msg="This item is not in the response")
+        self.assertFalse(data['Words'].get('snow'), msg="This item is not in the response")
         self.assertTrue(data['Words']['laughing'] == 1)
         self.assertTrue(data['Words']['dashing'] == 1)
         self.assertTrue(data['Words']['sing'] == 1)
@@ -140,7 +152,10 @@ class FileParserTestCase(unittest.TestCase):
 
     # Discard and Include words with matching substrings at the same time
     def test_discard_and_keep_with_matching_string(self):
-        response = self.app.get('/parse/jingle.txt?discard=dash&only=ing')          # Only keep those words that have 'ing' within them
+        discard = 'dash'
+        keep = 'ing'
+        # Only keep those words that have 'ing' within them and does not have 'dash'
+        response = self.app.get('/parse/jingle.txt?' + 'discard=' + discard + '&' + 'only=' + keep)
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
@@ -148,19 +163,22 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(data['Number of Lines'] == 18)
         self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
 
+        self.assertEqual(len(data['Words']), 6, msg="6 words have been returned in response")
         self.assertTrue(data['Words']['jingle'] == 6)
-        self.assertFalse(data['Words'].get('bells'), msg="Discarded this one")
-        self.assertFalse(data['Words'].get('ride'), msg="Discarded this one")
-        self.assertFalse(data['Words'].get('the'), msg="Discarded this one")
-        self.assertFalse(data['Words'].get('snow'), msg="Discarded this one")
+        self.assertFalse(data['Words'].get('bells'), msg="This item is not in the response")
+        self.assertFalse(data['Words'].get('ride'), msg="This item is not in the response")
+        self.assertFalse(data['Words'].get('the'), msg="This item is not in the response")
+        self.assertFalse(data['Words'].get('snow'), msg="This item is not in the response")
         self.assertTrue(data['Words']['laughing'] == 1)
-        self.assertFalse(data['Words'].get('dashing'), msg="Discarded this one")
+        self.assertFalse(data['Words'].get('dashing'), msg="This item is not in the response")
         self.assertTrue(data['Words']['sing'] == 1)
 
 
     # Checking words that are not in the file
     def test_words_that_are_unavailable(self):
-        response = self.app.get('/parse/jingle.txt')          # Only keep those words that have 'ing' within them
+        keep = 'foo'
+        # Keep only those words that have 'foo' in them
+        response = self.app.get('/parse/jingle.txt?' + 'only=' + keep)
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
@@ -168,11 +186,11 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(data['Number of Lines'] == 18)
         self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
 
-        self.assertTrue(data['Words']['jingle'] == 6)           # 'jingle' appears 6 times
-        self.assertTrue(data['Words']['bells'] == 5)            # 'bells' appears 5 times
-        self.assertTrue(data['Words']['ride'] == 3)             # 'ride' appears 3 times
-        self.assertFalse(data['Words'].get('foo'), msg="'foo' is not there in the file")
-        self.assertFalse(data['Words'].get('boom'), msg="'boom' is not there in the file")
+        self.assertEqual(len(data['Words']), 0, msg="No words has been returned in response")
+        self.assertFalse(data['Words'].get('jingle'), msg="jingle is not there")
+        self.assertFalse(data['Words'].get('bells'), msg="bells is not there")
+        self.assertFalse(data['Words'].get('ride'), msg="ride is not there")
+
 
 
 if __name__ == '__main__':
