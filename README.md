@@ -132,8 +132,8 @@ How to Run
   Be careful about '\&'. If you use web browser then only '&' is needed
 ```
 
-Run Test
---------
+Running Test
+-------------
 ```
   $ ./test_fileparser.py 
 ```
