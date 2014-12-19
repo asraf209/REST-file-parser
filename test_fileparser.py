@@ -38,6 +38,14 @@ class FileParserTestCase(unittest.TestCase):
         self.assertEqual(data['Number of Words'], 4)
 
 
+    # Try to upload a file type, that is not supported
+    def test_not_supported_file_type(self):
+        response = self.app.post('/upload',
+                    data={'file':(StringIO('We are sample contents'), 'test.foo')})
+        self.assertTrue(response.status_code == 200, msg='POST request works fine')
+        self.assertTrue('Not a supported file type' in response.data)
+
+
     # Test uploading a blank file
     def test_upload_a_blank_file(self):
         response = self.app.post('/upload',
