@@ -31,8 +31,8 @@ class FileParserTestCase(unittest.TestCase):
         response = self.app.post('/upload',
                     data={'file':(StringIO('We are sample contents'), 'test.txt')})
         self.assertTrue(response.status_code == 200, msg='POST request works fine')
-
         data = json.loads(response.data)
+
         self.assertEqual(data['File Name'], 'test.txt')
         self.assertEqual(data['Number of Lines'], 1)
         self.assertEqual(data['Number of Words'], 4)
@@ -51,8 +51,8 @@ class FileParserTestCase(unittest.TestCase):
         response = self.app.post('/upload',
                     data={'file':(StringIO(''), 'test-blank.txt')})
         self.assertTrue(response.status_code == 200, msg='POST request works fine')
-
         data = json.loads(response.data)
+
         self.assertEqual(data['File Name'], 'test-blank.txt')
         self.assertEqual(data['Number of Lines'], 0)
         self.assertEqual(data['Number of Words'], 0)
@@ -73,6 +73,22 @@ class FileParserTestCase(unittest.TestCase):
         data = json.loads(response.data)
         self.assertTrue(data['File Name'] == 'jingle.txt')
         self.assertTrue(data['Size'] == 413, msg='File size: 413 B')
+
+
+    # Parse a file and count lines, words
+    def test_parse_file(self):
+        response = self.app.get('/parse/jingle.txt')          # 'jingle.txt' is already uploaded onto the 'uploads' folder
+        self.assertTrue(response.status_code == 200, msg='GET request works fine')
+        data = json.loads(response.data)
+        
+        self.assertTrue(data['File Name'] == 'jingle.txt')
+        self.assertTrue(data['Number of Lines'] == 18)
+        self.assertTrue(data['Number of Words'] == 78)
+        self.assertTrue(data['Words']['jingle'] == 6)           # 'jingle' appears 6 times
+        self.assertTrue(data['Words']['bells'] == 5)            # 'bells' appears 5 times
+        self.assertTrue(data['Words']['ride'] == 3)             # 'ride' appears 3 times
+        self.assertTrue(data['Words']['the'] == 5)              # 'the' appears 5 times
+        self.assertTrue(data['Words']['snow'] == 1)             # 'snow' appears 1 times
 
 
 if __name__ == '__main__':
