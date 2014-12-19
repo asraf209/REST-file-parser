@@ -40,6 +40,7 @@ def parse(filename):
 # Also update frequency as necessary
 def add_to_map(words):
     for word in words:
+        word = word.lower()
         if mapWord.get(word) is None:
             mapWord[word] = 1
         else:
