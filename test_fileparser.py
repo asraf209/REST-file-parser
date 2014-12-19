@@ -66,5 +66,14 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(len(data) > 0, msg='Possibly there are few uploaded files')
 
 
+    # Read a file metadata
+    def test_file_metadata(self):
+        response = self.app.get('/files/rest.txt')
+        self.assertTrue(response.status_code == 200, msg='GET request works fine')
+        data = json.loads(response.data)
+        self.assertTrue(data['File Name'] == 'rest.txt')
+        self.assertTrue(data['Size'] == 1174, msg='File size: 1174 B')
+
+
 if __name__ == '__main__':
     unittest.main()
