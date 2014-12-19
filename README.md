@@ -131,3 +131,17 @@ How to Run
 ```
   Be careful about '\&'. If you use web browser then only '&' is needed
 ```
+
+Run Test
+--------
+```
+  $ ./test_fileparser.py 
+```
+```
+    .............
+    ----------------------------------------------------------------------
+    Ran 13 tests in 0.127s
+    
+    OK
+
+```
