@@ -4,7 +4,7 @@
 
 import config
 
-# Read a file and count individual word
+# Read a file, count lines and individual word
 def parse(filename):
     out = {}                # Final JSON response
     mapWord = {}            # HashMap of <word, frequency>
