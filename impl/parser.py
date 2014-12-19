@@ -2,7 +2,7 @@
 # Parser to parse a text file and
 # then count lines, words and word frequencies
 
-import config
+import config as cfg
 
 # Read a file, count lines and individual word
 def parse(filename):
@@ -13,17 +13,17 @@ def parse(filename):
     num_words = 0           # Number of words
 
     try:
-        with open(config.UPLOAD_FOLDER + '/' + filename, 'r') as file:
+        with open(cfg.UPLOAD_FOLDER + '/' + filename, 'r') as file:
             for line in file:                   # For each line
                 num_lines += 1
                 words = line.split()            # split a line into words
                 num_words += len(words)
                 add_to_map(mapWord, words)               # put all words into HashMap.
 
-            out['File Name'] = filename
-            out['Number of Lines'] = num_lines
-            out['Number of Words'] = num_words
-            out['Words'] = mapWord
+            out[cfg.FILE_NAME] = filename
+            out[cfg.LINE_COUNT] = num_lines
+            out[cfg.WORD_COUNT] = num_words
+            out[cfg.WORD_LIST] = mapWord
 
             file.close()
             return out
@@ -40,7 +40,7 @@ def parse(filename):
 def add_to_map(mapWord, words):
     for word in words:
         word = word.lower()
-        if word[-1:] in config.TRAILING_CHARACTERS:           # Remove trailing characters (, . ; !)
+        if word[-1:] in cfg.TRAILING_CHARACTERS:           # Remove trailing characters (, . ; !)
             word = word[:-1]
         if mapWord.get(word) is None:
             mapWord[word] = 1

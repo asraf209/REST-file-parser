@@ -8,14 +8,14 @@ from werkzeug import secure_filename
 from os import listdir
 from os.path import join, isfile
 
-import impl.config as config
+import impl.config as cfg
 import impl.parser as parser
 from impl.utility import allowed_file, get_info, json_dumps, remove_from_map, keep_only
 
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = config.MAX_FILE_SIZE
+app.config['UPLOAD_FOLDER'] = cfg.UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = cfg.MAX_FILE_SIZE
 
 
 # Root entry
@@ -38,7 +38,7 @@ def upload_file():
     else:
         out = 'Not a supported file type. \n' \
                'These are the allowable file extensions: \n' + \
-                '{' + ', '.join(config.ALLOWED_EXTENSIONS) +'}\n'
+                '{' + ', '.join(cfg.ALLOWED_EXTENSIONS) +'}\n'
         return out
 
 
@@ -47,7 +47,7 @@ def upload_file():
 # with their metadata
 @app.route('/files', methods=['GET'])
 def get_all_files():
-    files = [ f for f in listdir(config.UPLOAD_FOLDER) if isfile(join(config.UPLOAD_FOLDER, f)) ]
+    files = [ f for f in listdir(cfg.UPLOAD_FOLDER) if isfile(join(cfg.UPLOAD_FOLDER, f)) ]
     filelist = []
     for filename in files:
         out = get_info(filename)                # Get metadata of a file
@@ -59,7 +59,7 @@ def get_all_files():
 # Returns detail info of an uploaded file
 @app.route('/files/<filename>', methods=['GET'])
 def get_file(filename):
-    if isfile(config.UPLOAD_FOLDER + '/' + filename):
+    if isfile(cfg.UPLOAD_FOLDER + '/' + filename):
         try:
             out = get_info(filename)
             return json_dumps(out)
@@ -76,7 +76,7 @@ def get_file(filename):
 # a matching string that should not be in a word
 @app.route('/parse/<filename>', methods=['GET'])
 def parse_file(filename):
-    if isfile(config.UPLOAD_FOLDER + '/' + filename):
+    if isfile(cfg.UPLOAD_FOLDER + '/' + filename):
         map = parser.parse(filename)
 
         wordToRemove = request.args.get('discard', None)

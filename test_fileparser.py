@@ -1,9 +1,10 @@
 #!venv/bin/python
 
+import json
 import unittest
 import fileparser
+import impl.config as cfg
 from StringIO import StringIO
-import json
 
 
 class FileParserTestCase(unittest.TestCase):
@@ -35,14 +36,14 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200, msg='POST request works fine')
         data = json.loads(response.data)
 
-        self.assertEqual(data['File Name'], 'test.txt')
-        self.assertEqual(data['Number of Lines'], 1)
-        self.assertEqual(data['Number of Words'], 4)
+        self.assertEqual(data[cfg.FILE_NAME], 'test.txt')
+        self.assertEqual(data[cfg.LINE_COUNT], 1)
+        self.assertEqual(data[cfg.WORD_COUNT], 4)
 
-        self.assertEqual(len(data['Words']), 3, msg="3 words has been returned in response")
-        self.assertEqual(data['Words']['hello'], 2)
-        self.assertEqual(data['Words']['world'], 1)
-        self.assertEqual(data['Words']['all'], 1)
+        self.assertEqual(len(data[cfg.WORD_LIST]), 3, msg="3 words has been returned in response")
+        self.assertEqual(data[cfg.WORD_LIST]['hello'], 2)
+        self.assertEqual(data[cfg.WORD_LIST]['world'], 1)
+        self.assertEqual(data[cfg.WORD_LIST]['all'], 1)
 
 
 
@@ -63,10 +64,10 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200, msg='POST request works fine')
         data = json.loads(response.data)
 
-        self.assertEqual(data['File Name'], 'test-blank.txt')
-        self.assertEqual(data['Number of Lines'], 0)
-        self.assertEqual(data['Number of Words'], 0)
-        self.assertEqual(len(data['Words']), 0, msg="No words has been returned in response")
+        self.assertEqual(data[cfg.FILE_NAME], 'test-blank.txt')
+        self.assertEqual(data[cfg.LINE_COUNT], 0)
+        self.assertEqual(data[cfg.WORD_COUNT], 0)
+        self.assertEqual(len(data[cfg.WORD_LIST]), 0, msg="No words has been returned in response")
 
 
 
@@ -84,7 +85,7 @@ class FileParserTestCase(unittest.TestCase):
         response = self.app.get('/files/jingle.txt')          # 'jingle.txt' is already uploaded onto the 'uploads' folder
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
-        self.assertTrue(data['File Name'] == 'jingle.txt')
+        self.assertTrue(data[cfg.FILE_NAME] == 'jingle.txt')
         self.assertTrue(data['Size'] == 413, msg='File size: 413 B')
 
 
@@ -95,19 +96,19 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
-        self.assertTrue(data['File Name'] == 'jingle.txt')
-        self.assertTrue(data['Number of Lines'] == 18)
-        self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
+        self.assertTrue(data[cfg.FILE_NAME] == 'jingle.txt')
+        self.assertTrue(data[cfg.LINE_COUNT] == 18)
+        self.assertTrue(data[cfg.WORD_COUNT] == 78)          # Total # of words in the text file
 
-        self.assertEqual(len(data['Words']), 37, msg="37 words have been returned in response")
-        self.assertTrue(data['Words']['jingle'] == 6)           # 'jingle' appears 6 times
-        self.assertTrue(data['Words']['bells'] == 5)            # 'bells' appears 5 times
-        self.assertTrue(data['Words']['ride'] == 3)             # 'ride' appears 3 times
-        self.assertTrue(data['Words']['the'] == 5)              # 'the' appears 5 times
-        self.assertTrue(data['Words']['snow'] == 1)
-        self.assertTrue(data['Words']['laughing'] == 1)
-        self.assertTrue(data['Words']['dashing'] == 1)
-        self.assertTrue(data['Words']['sing'] == 1)
+        self.assertEqual(len(data[cfg.WORD_LIST]), 37, msg="37 words have been returned in response")
+        self.assertTrue(data[cfg.WORD_LIST]['jingle'] == 6)           # 'jingle' appears 6 times
+        self.assertTrue(data[cfg.WORD_LIST]['bells'] == 5)            # 'bells' appears 5 times
+        self.assertTrue(data[cfg.WORD_LIST]['ride'] == 3)             # 'ride' appears 3 times
+        self.assertTrue(data[cfg.WORD_LIST]['the'] == 5)              # 'the' appears 5 times
+        self.assertTrue(data[cfg.WORD_LIST]['snow'] == 1)
+        self.assertTrue(data[cfg.WORD_LIST]['laughing'] == 1)
+        self.assertTrue(data[cfg.WORD_LIST]['dashing'] == 1)
+        self.assertTrue(data[cfg.WORD_LIST]['sing'] == 1)
 
 
 
@@ -119,19 +120,19 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
-        self.assertTrue(data['File Name'] == 'jingle.txt')
-        self.assertTrue(data['Number of Lines'] == 18)
-        self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
+        self.assertTrue(data[cfg.FILE_NAME] == 'jingle.txt')
+        self.assertTrue(data[cfg.LINE_COUNT] == 18)
+        self.assertTrue(data[cfg.WORD_COUNT] == 78)          # Total # of words in the text file
 
-        self.assertEqual(len(data['Words']), 30, msg="30 words have been returned in response")
-        self.assertTrue(data['Words']['bells'] == 5)
-        self.assertTrue(data['Words']['ride'] == 3)
-        self.assertTrue(data['Words']['the'] == 5)
-        self.assertTrue(data['Words']['snow'] == 1)
-        self.assertFalse(data['Words'].get('jingle'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('laughing'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('dashing'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('sing'), msg="This item is not in the response")
+        self.assertEqual(len(data[cfg.WORD_LIST]), 30, msg="30 words have been returned in response")
+        self.assertTrue(data[cfg.WORD_LIST]['bells'] == 5)
+        self.assertTrue(data[cfg.WORD_LIST]['ride'] == 3)
+        self.assertTrue(data[cfg.WORD_LIST]['the'] == 5)
+        self.assertTrue(data[cfg.WORD_LIST]['snow'] == 1)
+        self.assertFalse(data[cfg.WORD_LIST].get('jingle'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('laughing'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('dashing'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('sing'), msg="This item is not in the response")
 
 
 
@@ -143,19 +144,19 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
-        self.assertTrue(data['File Name'] == 'jingle.txt')
-        self.assertTrue(data['Number of Lines'] == 18)
-        self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
+        self.assertTrue(data[cfg.FILE_NAME] == 'jingle.txt')
+        self.assertTrue(data[cfg.LINE_COUNT] == 18)
+        self.assertTrue(data[cfg.WORD_COUNT] == 78)          # Total # of words in the text file
 
-        self.assertEqual(len(data['Words']), 7, msg="7 words have been returned in response")
-        self.assertTrue(data['Words']['jingle'] == 6)
-        self.assertTrue(data['Words']['laughing'] == 1)
-        self.assertTrue(data['Words']['dashing'] == 1)
-        self.assertTrue(data['Words']['sing'] == 1)
-        self.assertFalse(data['Words'].get('bells'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('ride'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('the'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('snow'), msg="This item is not in the response")
+        self.assertEqual(len(data[cfg.WORD_LIST]), 7, msg="7 words have been returned in response")
+        self.assertTrue(data[cfg.WORD_LIST]['jingle'] == 6)
+        self.assertTrue(data[cfg.WORD_LIST]['laughing'] == 1)
+        self.assertTrue(data[cfg.WORD_LIST]['dashing'] == 1)
+        self.assertTrue(data[cfg.WORD_LIST]['sing'] == 1)
+        self.assertFalse(data[cfg.WORD_LIST].get('bells'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('ride'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('the'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('snow'), msg="This item is not in the response")
 
 
     # Discard and Include words with matching substrings at the same time
@@ -167,19 +168,19 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
-        self.assertTrue(data['File Name'] == 'jingle.txt')
-        self.assertTrue(data['Number of Lines'] == 18)
-        self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
+        self.assertTrue(data[cfg.FILE_NAME] == 'jingle.txt')
+        self.assertTrue(data[cfg.LINE_COUNT] == 18)
+        self.assertTrue(data[cfg.WORD_COUNT] == 78)          # Total # of words in the text file
 
-        self.assertEqual(len(data['Words']), 6, msg="6 words have been returned in response")
-        self.assertTrue(data['Words']['jingle'] == 6)
-        self.assertTrue(data['Words']['sing'] == 1)
-        self.assertTrue(data['Words']['laughing'] == 1)
-        self.assertFalse(data['Words'].get('dashing'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('bells'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('ride'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('the'), msg="This item is not in the response")
-        self.assertFalse(data['Words'].get('snow'), msg="This item is not in the response")
+        self.assertEqual(len(data[cfg.WORD_LIST]), 6, msg="6 words have been returned in response")
+        self.assertTrue(data[cfg.WORD_LIST]['jingle'] == 6)
+        self.assertTrue(data[cfg.WORD_LIST]['sing'] == 1)
+        self.assertTrue(data[cfg.WORD_LIST]['laughing'] == 1)
+        self.assertFalse(data[cfg.WORD_LIST].get('dashing'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('bells'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('ride'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('the'), msg="This item is not in the response")
+        self.assertFalse(data[cfg.WORD_LIST].get('snow'), msg="This item is not in the response")
 
 
 
@@ -191,14 +192,14 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
-        self.assertTrue(data['File Name'] == 'jingle.txt')
-        self.assertTrue(data['Number of Lines'] == 18)
-        self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
+        self.assertTrue(data[cfg.FILE_NAME] == 'jingle.txt')
+        self.assertTrue(data[cfg.LINE_COUNT] == 18)
+        self.assertTrue(data[cfg.WORD_COUNT] == 78)          # Total # of words in the text file
 
-        self.assertEqual(len(data['Words']), 0, msg="No words has been returned in response")
-        self.assertFalse(data['Words'].get('jingle'), msg="jingle is not there")
-        self.assertFalse(data['Words'].get('bells'), msg="bells is not there")
-        self.assertFalse(data['Words'].get('ride'), msg="ride is not there")
+        self.assertEqual(len(data[cfg.WORD_LIST]), 0, msg="No words has been returned in response")
+        self.assertFalse(data[cfg.WORD_LIST].get('jingle'), msg="jingle is not there")
+        self.assertFalse(data[cfg.WORD_LIST].get('bells'), msg="bells is not there")
+        self.assertFalse(data[cfg.WORD_LIST].get('ride'), msg="ride is not there")
 
 
     # Checking matching words that are not in the file
@@ -209,15 +210,15 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
 
-        self.assertTrue(data['File Name'] == 'jingle.txt')
-        self.assertTrue(data['Number of Lines'] == 18)
-        self.assertTrue(data['Number of Words'] == 78)          # Total # of words in the text file
+        self.assertTrue(data[cfg.FILE_NAME] == 'jingle.txt')
+        self.assertTrue(data[cfg.LINE_COUNT] == 18)
+        self.assertTrue(data[cfg.WORD_COUNT] == 78)          # Total # of words in the text file
 
-        self.assertEqual(len(data['Words']), 37, msg="37 words has been returned in response")
-        self.assertTrue(data['Words']['jingle'] == 6)           # 'jingle' appears 6 times
-        self.assertTrue(data['Words']['bells'] == 5)            # 'bells' appears 5 times
-        self.assertTrue(data['Words']['ride'] == 3)             # 'ride' appears 3 times
-        self.assertTrue(data['Words']['snow'] == 1)
+        self.assertEqual(len(data[cfg.WORD_LIST]), 37, msg="37 words has been returned in response")
+        self.assertTrue(data[cfg.WORD_LIST]['jingle'] == 6)           # 'jingle' appears 6 times
+        self.assertTrue(data[cfg.WORD_LIST]['bells'] == 5)            # 'bells' appears 5 times
+        self.assertTrue(data[cfg.WORD_LIST]['ride'] == 3)             # 'ride' appears 3 times
+        self.assertTrue(data[cfg.WORD_LIST]['snow'] == 1)
 
 
 

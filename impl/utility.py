@@ -1,8 +1,8 @@
 #!venv/bin/python
 # Provides handy methods to modularize specific task
 
-import config
 import json
+import config as cfg
 from time import asctime, localtime
 from os import stat
 
@@ -16,18 +16,18 @@ def json_dumps(map):
 # Check extension for allowable file types
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1] in cfg.ALLOWED_EXTENSIONS
 
 
 
 # Get metadata of a file
 def get_info(filename):
-    st = stat(config.UPLOAD_FOLDER + '/' + filename)
+    st = stat(cfg.UPLOAD_FOLDER + '/' + filename)
     out = {}
-    out['File Name'] = filename
-    out['Size'] = st.st_size
-    out['Last Access Time'] = asctime(localtime(st.st_atime))
-    out['Last Modify Time'] = asctime(localtime(st.st_mtime))
+    out[cfg.FILE_NAME] = filename
+    out[cfg.SIZE] = st.st_size
+    out[cfg.LAST_ACCESS_TIME] = asctime(localtime(st.st_atime))
+    out[cfg.LAST_MODIFY_TIME] = asctime(localtime(st.st_mtime))
     return out
 
 
@@ -38,9 +38,9 @@ def remove_from_map(map, substr):
         return map
     else:
         substr = substr.strip()
-        for word in map['Words'].keys():
+        for word in map[cfg.WORD_LIST].keys():
             if substr in word:
-                del map['Words'][word]
+                del map[cfg.WORD_LIST][word]
 
 
 
@@ -51,6 +51,6 @@ def keep_only(map, substr):
         return map
     else:
         substr = substr.strip()
-        for word in map['Words'].keys():
+        for word in map[cfg.WORD_LIST].keys():
             if substr not in word:
-                del map['Words'][word]
+                del map[cfg.WORD_LIST][word]
