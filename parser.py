@@ -4,12 +4,11 @@
 
 import config
 
-out = {}            # Final JSON response
-mapWord = {}        # HashMap of <word, frequency>
-
-
 # Read a file and count individual word
 def parse(filename):
+    out = {}                # Final JSON response
+    mapWord = {}            # HashMap of <word, frequency>
+
     num_lines = 0           # Number of lines
     num_words = 0           # Number of words
 
@@ -19,7 +18,7 @@ def parse(filename):
                 num_lines += 1
                 words = line.split()            # split a line into words
                 num_words += len(words)
-                add_to_map(words)               # put all words into HashMap.
+                add_to_map(mapWord, words)               # put all words into HashMap.
 
             out['File Name'] = filename
             out['Number of Lines'] = num_lines
@@ -38,7 +37,7 @@ def parse(filename):
 
 # Put all words into HashMap.
 # Also update frequency as necessary
-def add_to_map(words):
+def add_to_map(mapWord, words):
     for word in words:
         word = word.lower()
         if word[-1:] in config.TRAILING_CHARACTERS:           # Remove trailing characters (, . ; !)
