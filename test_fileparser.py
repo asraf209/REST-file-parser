@@ -80,7 +80,7 @@ class FileParserTestCase(unittest.TestCase):
         response = self.app.get('/parse/jingle.txt')          # 'jingle.txt' is already uploaded onto the 'uploads' folder
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
-        
+
         self.assertTrue(data['File Name'] == 'jingle.txt')
         self.assertTrue(data['Number of Lines'] == 18)
         self.assertTrue(data['Number of Words'] == 78)

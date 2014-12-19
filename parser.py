@@ -41,6 +41,8 @@ def parse(filename):
 def add_to_map(words):
     for word in words:
         word = word.lower()
+        if word[-1:] in config.TRAILING_CHARACTERS:           # Remove trailing characters (, . ; !)
+            word = word[:-1]
         if mapWord.get(word) is None:
             mapWord[word] = 1
         else:
