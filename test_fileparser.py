@@ -68,11 +68,11 @@ class FileParserTestCase(unittest.TestCase):
 
     # Read a file metadata
     def test_file_metadata(self):
-        response = self.app.get('/files/rest.txt')          # 'rest.txt' is already uploaded onto the 'uploads' folder
+        response = self.app.get('/files/jingle.txt')          # 'jingle.txt' is already uploaded onto the 'uploads' folder
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
-        self.assertTrue(data['File Name'] == 'rest.txt')
-        self.assertTrue(data['Size'] == 1174, msg='File size: 1174 B')
+        self.assertTrue(data['File Name'] == 'jingle.txt')
+        self.assertTrue(data['Size'] == 413, msg='File size: 413 B')
 
 
 if __name__ == '__main__':

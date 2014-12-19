@@ -61,7 +61,6 @@ def get_file(filename):
         try:
             out = get_info(filename)
             return json_dumps(out)
-
         except:
             return 'Failed to get information about the file: ' + filename
     else:
