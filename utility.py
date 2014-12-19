@@ -12,10 +12,12 @@ def json_dumps(map):
     return json.dumps(map, indent = 4, separators=(',', ': '),sort_keys=True)
 
 
+
 # Check extension for allowable file types
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
+
 
 
 # Get metadata of a file
@@ -29,6 +31,7 @@ def get_info(filename):
     return out
 
 
+
 # Remove a word from HashMap, who has a matching substring
 def remove_from_map(map, substr):
     if substr is None or substr.strip() == '':
@@ -38,6 +41,7 @@ def remove_from_map(map, substr):
         for word in map['Words'].keys():
             if substr in word:
                 del map['Words'][word]
+
 
 
 # Keep only those words who contain a specific substring.

@@ -42,6 +42,7 @@ def upload_file():
         return out
 
 
+
 # Returns list of all files that are uploaded,
 # with their metadata
 @app.route('/files', methods=['GET'])
@@ -52,6 +53,7 @@ def get_all_files():
         out = get_info(filename)                # Get metadata of a file
         filelist.append(out)                    # And append those info into a list
     return json_dumps(filelist)                 # Returns response as JSON
+
 
 
 # Returns detail info of an uploaded file
@@ -65,6 +67,7 @@ def get_file(filename):
             return 'Failed to get information about the file: ' + filename
     else:
         return 'File not found: ' + filename + '\n'
+
 
 
 # Parse and get word count for any specific file that has already been uploaded.

@@ -5,6 +5,7 @@ import fileparser
 from StringIO import StringIO
 import json
 
+
 class FileParserTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -44,6 +45,7 @@ class FileParserTestCase(unittest.TestCase):
         self.assertEqual(data['Words']['all'], 1)
 
 
+
     # Try to upload an unsupported file type
     def test_not_supported_file_type(self):
         # POSTing a file named 'test.foo' which is not supported
@@ -51,6 +53,7 @@ class FileParserTestCase(unittest.TestCase):
                     data={'file':(StringIO('We are sample contents'), 'test.foo')})
         self.assertTrue(response.status_code == 200, msg='POST request works fine')
         self.assertTrue('Not a supported file type' in response.data)
+
 
 
     # Test uploading a blank file
@@ -66,12 +69,14 @@ class FileParserTestCase(unittest.TestCase):
         self.assertEqual(len(data['Words']), 0, msg="No words has been returned in response")
 
 
+
     # Check list of files that are already been uploaded
     def test_list_of_files(self):
         response = self.app.get('/files')
         self.assertTrue(response.status_code == 200, msg='GET request works fine')
         data = json.loads(response.data)
         self.assertTrue(len(data) > 0, msg='There are few uploaded files in uploads/ folder')
+
 
 
     # Read a file metadata
@@ -81,6 +86,7 @@ class FileParserTestCase(unittest.TestCase):
         data = json.loads(response.data)
         self.assertTrue(data['File Name'] == 'jingle.txt')
         self.assertTrue(data['Size'] == 413, msg='File size: 413 B')
+
 
 
     # Parse a file that is already uploaded and count lines, words
@@ -104,6 +110,7 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(data['Words']['sing'] == 1)
 
 
+
     # Discard all words that have a matching substring
     def test_discard_with_matching_string(self):
         discard = 'ing'
@@ -125,6 +132,7 @@ class FileParserTestCase(unittest.TestCase):
         self.assertFalse(data['Words'].get('laughing'), msg="This item is not in the response")
         self.assertFalse(data['Words'].get('dashing'), msg="This item is not in the response")
         self.assertFalse(data['Words'].get('sing'), msg="This item is not in the response")
+
 
 
     # Consider only those words that have a matching substring
@@ -174,6 +182,7 @@ class FileParserTestCase(unittest.TestCase):
         self.assertFalse(data['Words'].get('snow'), msg="This item is not in the response")
 
 
+
     # Checking matching words that are not in the file
     def test_words_that_are_unavailable_with_only(self):
         keep = 'foo'
@@ -209,6 +218,7 @@ class FileParserTestCase(unittest.TestCase):
         self.assertTrue(data['Words']['bells'] == 5)            # 'bells' appears 5 times
         self.assertTrue(data['Words']['ride'] == 3)             # 'ride' appears 3 times
         self.assertTrue(data['Words']['snow'] == 1)
+
 
 
 if __name__ == '__main__':
