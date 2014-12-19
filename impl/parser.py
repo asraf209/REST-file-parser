@@ -14,11 +14,11 @@ def parse(filename):
 
     try:
         with open(cfg.UPLOAD_FOLDER + '/' + filename, 'r') as file:
-            for line in file:                   # For each line
+            for line in file:                           # For each line
                 num_lines += 1
-                words = line.split()            # split a line into words
+                words = line.split()                    # split a line into words
                 num_words += len(words)
-                add_to_map(mapWord, words)               # put all words into HashMap.
+                add_to_map(mapWord, words)              # put all words into HashMap.
 
             out[cfg.FILE_NAME] = filename
             out[cfg.LINE_COUNT] = num_lines

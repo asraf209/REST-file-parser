@@ -14,7 +14,7 @@ from impl.utility import allowed_file, get_info, json_dumps, remove_from_map, ke
 
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = cfg.UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER']      = cfg.UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = cfg.MAX_FILE_SIZE
 
 
