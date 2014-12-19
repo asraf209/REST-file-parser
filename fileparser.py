@@ -2,7 +2,7 @@
 # Main entry point of the application.
 # Provides various end points
 
-from flask import Flask, request, redirect, url_for, Response, jsonify
+from flask import Flask, request
 from werkzeug import secure_filename
 
 from os import listdir
@@ -18,7 +18,7 @@ app.config['UPLOAD_FOLDER'] = config.UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = config.MAX_FILE_SIZE
 
 
-# Home page
+# Root entry
 @app.route('/')
 def index():
     return "I am running!"
