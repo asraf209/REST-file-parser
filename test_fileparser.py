@@ -93,7 +93,7 @@ class FileParserTestCase(unittest.TestCase):
     # Parse a file that is already uploaded and count lines, words
     def test_parse_and_count(self):
         response = self.app.get('/parse/jingle.txt')                    # 'jingle.txt' is already uploaded onto the 'uploads' folder
-        self.assertTrue(response.status_code == 200, msg='GET request works fine')
+        self.assertTrue(response.status_code == 200,            msg='GET request works fine')
         data = json.loads(response.data)
 
         self.assertTrue(data[cfg.FILE_NAME]  == 'jingle.txt')
@@ -117,7 +117,7 @@ class FileParserTestCase(unittest.TestCase):
         discard = 'ing'
         # Discard those words that have 'ing' within them
         response = self.app.get('/parse/jingle.txt?' + 'discard=' + discard)
-        self.assertTrue(response.status_code == 200, msg='GET request works fine')
+        self.assertTrue(response.status_code == 200,            msg='GET request works fine')
         data = json.loads(response.data)
 
         self.assertTrue(data[cfg.FILE_NAME]  == 'jingle.txt')
@@ -141,7 +141,7 @@ class FileParserTestCase(unittest.TestCase):
         keep = 'ing'
         # Keep only those words that have 'ing' within them
         response = self.app.get('/parse/jingle.txt?' + 'only=' + keep)
-        self.assertTrue(response.status_code == 200, msg='GET request works fine')
+        self.assertTrue(response.status_code == 200,            msg='GET request works fine')
         data = json.loads(response.data)
 
         self.assertTrue(data[cfg.FILE_NAME]  == 'jingle.txt')
@@ -165,7 +165,7 @@ class FileParserTestCase(unittest.TestCase):
         keep = 'ing'
         # Only keep those words that have 'ing' within them and does not have 'dash'
         response = self.app.get('/parse/jingle.txt?' + 'discard=' + discard + '&' + 'only=' + keep)
-        self.assertTrue(response.status_code == 200, msg='GET request works fine')
+        self.assertTrue(response.status_code == 200,            msg='GET request works fine')
         data = json.loads(response.data)
 
         self.assertTrue(data[cfg.FILE_NAME]  == 'jingle.txt')
@@ -189,7 +189,7 @@ class FileParserTestCase(unittest.TestCase):
         keep = 'foo'
         # Keep only those words that have 'foo' in them
         response = self.app.get('/parse/jingle.txt?' + 'only=' + keep)
-        self.assertTrue(response.status_code == 200, msg='GET request works fine')
+        self.assertTrue(response.status_code == 200,            msg='GET request works fine')
         data = json.loads(response.data)
 
         self.assertTrue(data[cfg.FILE_NAME]  == 'jingle.txt')
@@ -207,7 +207,7 @@ class FileParserTestCase(unittest.TestCase):
         discard = 'foo'
         # Discard those words that have 'foo' in them
         response = self.app.get('/parse/jingle.txt?' + 'discard=' + discard)
-        self.assertTrue(response.status_code == 200, msg='GET request works fine')
+        self.assertTrue(response.status_code == 200,            msg='GET request works fine')
         data = json.loads(response.data)
 
         self.assertTrue(data[cfg.FILE_NAME]  == 'jingle.txt')
