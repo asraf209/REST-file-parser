@@ -2,7 +2,7 @@ REST-file-parser
 ================
 
 A RESTful web service, capable of uploading and parsing a text file. It returns total word counts, word frequencies 
-in the HTTP response body. It provides an end point to upload arbitrary file of size <= 10MB. It also provides end points to view uploaded files, files meta-data, parsing a file, parsing file with substring etc.
+in the HTTP response body. It provides an end point to upload arbitrary file of size <= 10MB. It also provides end points to view uploaded files, files meta-data, word frequencies, word searching with substring etc.
 
 Setting up environment
 ----------------------
